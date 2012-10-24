@@ -1,5 +1,5 @@
 var config = {
-    port: 80,
+    port: 5167,
     allow: '*'
 };
 module.exports = config;
