@@ -1,20 +1,16 @@
-var cluster = require('cluster'),
-    os = require('os'),
-    http = require('http'),
+var http = require('http'),
     fs = require('fs'),
     url = require('url'),
     querystring = require('querystring'),
     config = require('./config.js');
 
-var numCPUs = os.cpus().length,
-    port = config.port || 80,
-    allow = config.allow || '*',
-    httpServers = [],
+var httpServer,
     contentTypes = {
         'html': 'text/html',
-        'json': 'application/json',
+        'josn': 'application/json',
         'text': 'text/plain'
-    };
+    },
+    allow = config.allow || '*';
 
 function onRequest(request, response) {
     var parsedURL = url.parse(request.url),
@@ -92,23 +88,9 @@ function sendPageNotFound(response) {
     response.end();
 }
 
-function start() {
-    if (cluster.isMaster) {
-        // Fork workers.
-        for (var i = 0; i < numCPUs; i++) {
-            cluster.fork();
-        }
-
-        cluster.on('exit', function(worker, code, signal) {
-            console.log('worker ' + worker.process.pid + ' died');
-        });
-    } else {
-        // Workers can share any TCP connection
-        // In this case its a HTTP server
-        var httpServer = http.createServer(onRequest).listen(port);
-        httpServers.push(httpServer);
-        console.log('Cross-Domain Fetcher Server has started, listening ' + port + '.');
-    }
+function start(port) {
+    httpServer = http.createServer(onRequest).listen(port);
+    console.log('Cross-Domain Fetcher Server has started, listening ' + port + '.');
 }
 
-start();
+start(config.port);
