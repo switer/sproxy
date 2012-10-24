@@ -1,0 +1,6 @@
+url: http://m.weather.com.cn/data/101280101.html time: Wed Oct 24 2012 17:11:02 GMT+0800 (中国标准时间)
+url: http://m.weather.com.cn/data/101280101.html time: Wed Oct 24 2012 17:14:41 GMT+0800 (中国标准时间)
+url: http://m.weather.com.cn/data/101280101.html time: Wed Oct 24 2012 17:14:41 GMT+0800 (中国标准时间)
+url: http://m.weather.com.cn/data/101280101.html time: Wed Oct 24 2012 17:14:42 GMT+0800 (中国标准时间)
+url: http://m.weather.com.cn/data/101280101.html time: Wed Oct 24 2012 17:14:43 GMT+0800 (中国标准时间)
+url: http://m.weather.com.cn/data/101280101.html time: Wed Oct 24 2012 17:14:44 GMT+0800 (中国标准时间)
