@@ -2,6 +2,7 @@ var http = require('http'),
     fs = require('fs'),
     url = require('url'),
     querystring = require('querystring'),
+    commander = require('commander'),
     config = require('./config.js');
 
 var port = config.port,
@@ -40,7 +41,7 @@ function onRequest(request, response) {
         text = '';
 
     try {
-        log('url: ' + fetchURL + ' time: ' + (new Date()).toString());
+        // log('url: ' + fetchURL + ' time: ' + (new Date()).toString());
         http.get(fetchURL, function(res) {
             res.setEncoding('utf8');
             res.on('data', function (chunk) {
@@ -54,7 +55,7 @@ function onRequest(request, response) {
             sendPageNotFound(response);
         });
     } catch(e) {
-        error('url: ' + fetchURL + ' time: ' + (new Date()).toString());
+        // error('url: ' + fetchURL + ' time: ' + (new Date()).toString());
     }
 }
 
@@ -75,7 +76,7 @@ function error(text) {
 function append(dir, filename, text) {
     fs.readdir(dir, function(err, files) {
         if (!files) {
-            fs.mkdir(dir);
+            fs.mkdir(dir).sync();
         }
         fs.appendFile(filename, text + '\n');
     });
@@ -89,9 +90,34 @@ function sendPageNotFound(response) {
     response.end();
 }
 
-function start() {
+function start(port, pidFile) {
+    var address;
+
+    if (!port) {
+        commander.option('-p, --port <number>', 'server port')
+            .option('-P, --pidfile <path>', 'path of pidfile')
+            .parse(process.argv);
+        port = commander.port && parseFloat(commander.port);
+        pidFile = commander.pidfile;
+    }
+    if (!port) {
+        port = config.port;
+    }
+
     httpServer = http.createServer(onRequest).listen(port);
+    address = httpServer.address();
+
     console.log('Cross-Domain Fetcher Server has started, listening ' + port + '.');
+
+    if (pidFile) {
+        fs.writeFileSync(pidFile, process.pid);
+        process.on('SIGINT', function () {
+            if (fs.existsSync(pidFile)) {
+                fs.unlinkSync(pidFile);
+            }
+            process.kill(process.pid);
+        });
+    }
 }
 
 start();
