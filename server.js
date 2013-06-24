@@ -23,11 +23,7 @@ function onRequest(request, response) {
         return;
     }
 
-    var contentType = contentTypes[pathname],
-        options = {
-            'Content-Type': contentType,
-            'Access-Control-Allow-Origin' : allow
-        };
+    var contentType = contentTypes[pathname];
 
     if (!contentType) {
         sendPageNotFound(response);
@@ -37,16 +33,24 @@ function onRequest(request, response) {
     var query = querystring.parse(parsedURL.query),
         fetchURL = query.url,
         fetchOptions = url.parse(fetchURL),
+        callback = query.callback,
         cache = query.cache === 'true',
-        text = '';
+        text = '',
+        options = {
+            'Content-Type': contentType,
+            'Access-Control-Allow-Origin' : allow
+        };
 
     try {
-        // log('url: ' + fetchURL + ' time: ' + (new Date()).toString());
+        log('url: ' + fetchURL + ' time: ' + (new Date()).toString());
         http.get(fetchURL, function(res) {
             res.setEncoding('utf8');
             res.on('data', function (chunk) {
                 text += chunk;
             }).on('end', function() {
+                if (callback) {
+                    text = callback + '(' + text + ')';
+                }
                 response.writeHead(200, options);
                 response.write(text);
                 response.end();
@@ -55,28 +59,28 @@ function onRequest(request, response) {
             sendPageNotFound(response);
         });
     } catch(e) {
-        // error('url: ' + fetchURL + ' time: ' + (new Date()).toString());
+        error('url: ' + fetchURL + ' time: ' + (new Date()).toString());
     }
 }
 
 function log(text) {
     var now = new Date(),
         dir = 'log/',
-        filename = dir + now.getFullYear() + (now.getMonth() + 1) + now.getDate() + '.txt';
+        filename = dir + 'log-' + now.getFullYear() + (now.getMonth() + 1) + now.getDate() + '.log';
     append(dir, filename, text);
 }
 
 function error(text) {
     var now = new Date(),
-        dir = 'error/',
-        filename = dir + now.getFullYear() + (now.getMonth() + 1) + now.getDate() + '.txt';
+        dir = 'log/',
+        filename = dir + 'err-' + now.getFullYear() + (now.getMonth() + 1) + now.getDate() + '.log';
     append(dir, filename, text);
 }
 
 function append(dir, filename, text) {
     fs.readdir(dir, function(err, files) {
         if (!files) {
-            fs.mkdir(dir).sync();
+            fs.mkdirSync(dir);
         }
         fs.appendFile(filename, text + '\n');
     });
