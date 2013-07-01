@@ -50,3 +50,4 @@ tmp/
 logs/
 download/
 *.pid
+*.tgz
