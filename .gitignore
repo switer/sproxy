@@ -6,7 +6,6 @@
 *.exe
 *.o
 *.so
-bin/
 
 # Packages #
 ############
@@ -16,7 +15,6 @@ bin/
 *.dmg
 *.gz
 *.iso
-*.jar
 *.rar
 *.tar
 *.zip
@@ -24,19 +22,31 @@ bin/
 # Logs and databases #
 ######################
 *.log
-*.sql
 *.sqlite
 
 # OS generated files #
 ######################
 .DS_Store
 .DS_Store?
-ehthumbs.db
+._*
+.Spotlight-V100
+.Trashes
 Icon?
+ehthumbs.db
 Thumbs.db
 
-# IDE files #
-######################
-*.espressostorage
-
+# Nodejs files #
+################
 node_modules/
+
+# Eclipse generated files #
+###########################
+.settings
+eclipse/
+bin/
+.classpath
+.project
+tmp/
+logs/
+download/
+*.pid
