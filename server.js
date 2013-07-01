@@ -41,6 +41,7 @@ function onRequest(request, response) {
     var query = querystring.parse(parsedURL.query),
         fetchURL = query.url,
         fetchOptions = url.parse(fetchURL),
+        callback = query.callback,
         cache = query.cache === 'true',
         text = '',
         protocol = fetchURL.indexOf('https') === 0 ? https : http;
@@ -52,6 +53,9 @@ function onRequest(request, response) {
             res.on('data', function (chunk) {
                 text += chunk;
             }).on('end', function() {
+                if (callback) {
+                    text = callback + '(' + text + ')';
+                }
                 response.writeHead(200, options);
                 response.write(text);
                 response.end();
@@ -96,7 +100,7 @@ function append(filename, text) {
     var dir = 'logs/';
     fs.readdir(dir, function(err, files) {
         if (!files) {
-            fs.mkdir(dir).sync();
+            fs.mkdirSync(dir);
         }
     });
     fs.appendFile(dir + filename, text + '\n');
