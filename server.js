@@ -1,4 +1,5 @@
 var http = require('http'),
+    https = require('https'),
     fs = require('fs'),
     url = require('url'),
     querystring = require('querystring'),
@@ -13,6 +14,9 @@ var port = config.port,
         'json': 'application/json',
         'text': 'text/plain'
     };
+
+// HTTPS 不验证
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 
 function onRequest(request, response) {
     var parsedURL = url.parse(request.url),
@@ -38,11 +42,12 @@ function onRequest(request, response) {
         fetchURL = query.url,
         fetchOptions = url.parse(fetchURL),
         cache = query.cache === 'true',
-        text = '';
+        text = '',
+        protocol = fetchURL.indexOf('https') === 0 ? https : http;
 
     try {
-        // log('url: ' + fetchURL + ' time: ' + (new Date()).toString());
-        http.get(fetchURL, function(res) {
+        log('url: ' + fetchURL + ' time: ' + (new Date()).toString());
+        protocol.get(fetchURL, function(res) {
             res.setEncoding('utf8');
             res.on('data', function (chunk) {
                 text += chunk;
@@ -52,34 +57,49 @@ function onRequest(request, response) {
                 response.end();
             });
         }).on('error', function(e) {
+            error('url: ' + fetchURL + ' time: ' + (new Date()).toString() + ' error:' + e);
             sendPageNotFound(response);
         });
     } catch(e) {
-        // error('url: ' + fetchURL + ' time: ' + (new Date()).toString());
+        error('url: ' + fetchURL + ' time: ' + (new Date()).toString());
     }
+}
+
+function filename() {
+    var now = new Date(),
+        y = now.getFullYear(),
+        m = now.getMonth() + 1,
+        d = now.getDate();
+    if (m < 10) {
+        m = '0' + m;
+    }
+    if (d < 10) {
+        d = '0' + d;
+    }
+    return y + m + d + '.log';
 }
 
 function log(text) {
     var now = new Date(),
-        dir = 'log/',
-        filename = dir + now.getFullYear() + (now.getMonth() + 1) + now.getDate() + '.txt';
-    append(dir, filename, text);
+        prefix = 'log-';
+    append(prefix + filename(), text);
 }
 
 function error(text) {
     var now = new Date(),
-        dir = 'error/',
-        filename = dir + now.getFullYear() + (now.getMonth() + 1) + now.getDate() + '.txt';
-    append(dir, filename, text);
+        prefix = 'error-';
+    append(prefix + filename(), text);
 }
 
-function append(dir, filename, text) {
+function append(filename, text) {
+    console.log(text);
+    var dir = 'logs/';
     fs.readdir(dir, function(err, files) {
         if (!files) {
             fs.mkdir(dir).sync();
         }
-        fs.appendFile(filename, text + '\n');
     });
+    fs.appendFile(dir + filename, text + '\n');
 }
 
 function sendPageNotFound(response) {
@@ -107,7 +127,7 @@ function start(port, pidFile) {
     httpServer = http.createServer(onRequest).listen(port);
     address = httpServer.address();
 
-    console.log('Cross-Domain Fetcher Server has started, listening ' + port + '.');
+    log('Cross-Domain Fetcher Server has started, listening ' + port + '.');
 
     if (pidFile) {
         fs.writeFileSync(pidFile, process.pid);
