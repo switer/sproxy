@@ -7,7 +7,7 @@ var http = require('http'),
     querystring = require('querystring'),
     commander = require('commander'),
     config = require('../config.js'),
-    colors = require('colors')
+    colors = require('colors'),
     logdir = '../logs/';
 
 var port = config.port,
