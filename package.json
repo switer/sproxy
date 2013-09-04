@@ -17,6 +17,9 @@
         "name": "switer"
     },
     "main": "sproxy.js",
+    "bin": {
+        "sproxy": "bin/sproxy"
+    },
     "description": "Cross domain proxy server",
     "readme": "## Cross domain proxy server"
 }
