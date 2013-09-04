@@ -1,6 +1,6 @@
 {
     "name": "sproxy",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "private": false,
     "scripts": {
         "start": "node ./bin/sproxy"
@@ -17,9 +17,6 @@
         "name": "switer"
     },
     "main": "sproxy.js",
-    "bin": {
-        "spx": "bin/sproxy"
-    },
     "description": "Cross domain proxy server",
     "readme": "## Cross domain proxy server"
 }
