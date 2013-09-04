@@ -128,9 +128,12 @@ function start(port, pidFile) {
     var address;
 
     if (!port) {
-        commander.option('-p, --port <number>', 'server port')
-            .option('-P, --pidfile <path>', 'path of pidfile')
-            .parse(process.argv);
+        commander.version('1.0.1')
+                .usage('[options] <file ...>')
+                .option('-p, --port <number>', 'server port')
+                .option('-P, --pidfile <path>', 'path of pidfile, notice: P is upper case')
+                .parse(process.argv);
+
         port = commander.port && parseFloat(commander.port);
         pidFile = commander.pidfile;
     }
