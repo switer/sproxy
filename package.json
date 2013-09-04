@@ -1,7 +1,25 @@
 {
-    "name": "xd-fetcher",
-    "version": "0.0.1",
+    "name": "sproxy",
+    "version": "1.0.0",
+    "private": false,
+    "scripts": {
+        "start": "node ./bin/sproxy"
+    },
+    "directories": {
+        "bin": "bin"
+    },
     "dependencies": {
-    	"commander": "latest"
-    }
+        "commander": "latest",
+        "colors": "latest"
+    },
+    "email": "guankaishe@gmail.com",
+    "author": {
+        "name": "switer"
+    },
+    "main": "sproxy.js",
+    "bin": {
+        "spx": "bin/sproxy"
+    },
+    "description": "Cross domain proxy server",
+    "readme": "## Cross domain proxy server"
 }

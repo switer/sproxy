@@ -1,10 +1,14 @@
+#!/usr/bin/env node
+
 var http = require('http'),
     https = require('https'),
     fs = require('fs'),
     url = require('url'),
     querystring = require('querystring'),
     commander = require('commander'),
-    config = require('./config.js');
+    config = require('../config.js'),
+    colors = require('colors')
+    logdir = '../logs/';
 
 var port = config.port,
     allow = config.allow || '*',
@@ -47,7 +51,11 @@ function onRequest(request, response) {
         protocol = fetchURL.indexOf('https') === 0 ? https : http;
 
     try {
-        log('url: ' + fetchURL + ' time: ' + (new Date()).toString());
+        log('----------------------------------------' + 
+            '\nURL:    \n' + fetchURL.split('?')[0].yellow + 
+            '\nSearch: \n' + fetchURL.split('?')[1].green + 
+            '\nTime:   \n' + (new Date()).toString().cyan);
+
         protocol.get(fetchURL, function(res) {
             res.setEncoding('utf8');
             res.on('data', function (chunk) {
@@ -92,18 +100,20 @@ function log(text) {
 function error(text) {
     var now = new Date(),
         prefix = 'error-';
-    append(prefix + filename(), text);
+    append(prefix + filename(), text.red);
 }
 
 function append(filename, text) {
-    console.log(text);
-    var dir = 'logs/';
-    fs.readdir(dir, function(err, files) {
-        if (!files) {
-            fs.mkdirSync(dir);
-        }
-    });
-    fs.appendFile(dir + filename, text + '\n');
+    console.log(text + '\n\n\n');
+
+    /*Logs file is not need for command-line tool*/
+    // var dir = logdir;
+    // fs.readdir(dir, function(err, files) {
+    //     if (!files) {
+    //         fs.mkdirSync(dir);
+    //     }
+    // });
+    // fs.appendFile(dir + filename, text + '\n');
 }
 
 function sendPageNotFound(response) {
