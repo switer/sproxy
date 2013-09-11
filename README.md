@@ -16,3 +16,14 @@ proxy server quickly.Use __sproxy__ your can send cross-domain XHR request witho
   Use in your javascript ajax requesting
     
     $ http:///local-domain:port/json?url=encodeURIComponent(http://another-domain.com?search=sproxy)
+    
+## Will
+
+* Support node module, not only a command-line tool 
+
+
+## Contact
+
+__github__: [switer@github](https://github.com/switer)
+
+__gmail__:  <mailto:guankaishe@gmail.com>
