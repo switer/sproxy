@@ -22,6 +22,10 @@ var port = config.port,
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 
 function onRequest(request, response) {
+    if (!request.url) {
+        error('Request must include the "url" param! Please check your request url and try again.')
+        return;
+    }
     var parsedURL = url.parse(request.url),
         pathname = parsedURL.pathname.substring(1);
 
